@@ -2,8 +2,10 @@
 
 Status: work in progress.
 
-`repoforge` is planned as a local-first CLI for creating agent-friendly open
-source repositories with the boring setup already done.
+`repoforge` is planned as a local-first CLI for deterministic OSS repository
+generation, starting with
+[`agentic-oss-template`](https://github.com/rogerchappel/agentic-oss-template)
+as the default scaffold.
 
 The intended V1 command is:
 
@@ -16,7 +18,7 @@ repoforge new <name>
 The current PRD scopes `repoforge` around deterministic repository generation:
 
 - read `repoforge.config.json`
-- copy the bundled repository scaffold
+- copy `agentic-oss-template` as the default scaffold
 - replace project variables
 - initialize git
 - optionally create a GitHub repository only when explicitly requested
