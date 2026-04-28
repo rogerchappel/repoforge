@@ -99,11 +99,11 @@ npm-specific commands in that project's package publishing documentation.
 This repository's release automation is intentionally publish-ready but
 non-publishing:
 
-- `.github/workflows/ci.yml` runs template validation and an npm package scaffold
-  fixture through install, optional lint, test, smoke import, and
-  `npm pack --dry-run`.
-- `.github/workflows/package-dry-run.yml` can be run independently when the npm
-  package scaffold or npm publishing guidance changes.
+- `.github/workflows/ci.yml` runs repository validation, installs the root npm
+  package, checks JavaScript syntax, runs tests, runs the CLI smoke suite, and
+  runs `npm pack --dry-run`.
+- `.github/workflows/package-dry-run.yml` can be run independently when package
+  metadata, CLI source, scaffold assets, or npm publishing guidance changes.
 - `.github/workflows/release.yml` runs on `v*.*.*` tags or manual dispatch and
   performs release readiness checks only. The `npm-publish` environment is a
   future approval gate; the workflow does not run `npm publish`.
@@ -113,9 +113,9 @@ read-only checkout permissions, Homebrew credentials, or other registry secrets.
 
 ## npm And Provenance Readiness
 
-For generated projects that publish to npm, prefer GitHub Actions trusted
-publishing or npm provenance instead of long-lived automation tokens. A future
-publishing workflow should:
+For `repoforge` npm publishing, prefer GitHub Actions trusted publishing or npm
+provenance instead of long-lived automation tokens. A future publishing workflow
+should:
 
 - use an environment such as `npm-publish` for maintainer approval;
 - request `id-token: write` only in the publishing job that actually calls npm;
@@ -130,9 +130,9 @@ version is pushed to npm.
 
 ## Homebrew Readiness
 
-Homebrew distribution is not enabled by this repository yet. If a generated
-project later ships a CLI binary or npm-installed executable, prepare Homebrew
-support as a separate reviewable change:
+Homebrew distribution is not enabled by this repository yet. If `repoforge`
+later ships through Homebrew, prepare Homebrew support as a separate reviewable
+change:
 
 - define the supported install artifact, such as a tarball, npm package, or
   platform-specific binary;

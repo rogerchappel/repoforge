@@ -1,13 +1,19 @@
 import { generateProject, RepoForgeError } from "./generate.js";
+import { planGithubCreation } from "./github.js";
+import { planInitialIssues } from "./issues.js";
 
 const HELP = `Usage:
-  repoforge new <name> [--config <path>] [--target-dir <dir>] [--dry-run] [--no-git]
+  repoforge new <name> [--config <path>] [--target-dir <dir>] [--dry-run] [--no-git] [--github] [--public|--private] [--issue-plan]
 
 Options:
   --config <path>      Read configuration from a JSON file.
   --target-dir <dir>   Directory where the project should be created.
   --dry-run            Print the planned actions without writing files.
   --no-git             Do not initialize a git repository.
+  --github             Plan or run explicit GitHub repository creation.
+  --public             Use public visibility when creating a GitHub repository.
+  --private            Use private visibility when creating a GitHub repository.
+  --issue-plan         Print the initial issue creation plan.
   -h, --help           Show this help message.
 `;
 
@@ -36,10 +42,14 @@ export async function runCli(argv, io = {}) {
       configPath: parsed.configPath,
       targetDir: parsed.targetDir,
       dryRun: parsed.dryRun,
-      git: parsed.git
+      git: parsed.git,
+      github: parsed.github,
+      public: parsed.public,
+      private: parsed.private,
+      issuePlan: parsed.issuePlan
     });
 
-    stdout.write(formatResult(result));
+    stdout.write(await formatResult(result));
     return 0;
   } catch (error) {
     const structured = normalizeError(error);
@@ -62,7 +72,11 @@ export function parseArgs(argv) {
     configPath: undefined,
     targetDir: undefined,
     dryRun: undefined,
-    git: undefined
+    git: undefined,
+    github: undefined,
+    public: undefined,
+    private: undefined,
+    issuePlan: undefined
   };
 
   while (args.length > 0) {
@@ -75,6 +89,28 @@ export function parseArgs(argv) {
 
     if (arg === "--no-git") {
       parsed.git = false;
+      continue;
+    }
+
+    if (arg === "--github") {
+      parsed.github = true;
+      continue;
+    }
+
+    if (arg === "--public") {
+      parsed.public = true;
+      parsed.private = false;
+      continue;
+    }
+
+    if (arg === "--private") {
+      parsed.private = true;
+      parsed.public = false;
+      continue;
+    }
+
+    if (arg === "--issue-plan") {
+      parsed.issuePlan = true;
       continue;
     }
 
@@ -130,7 +166,7 @@ function normalizeError(error) {
   };
 }
 
-function formatResult(result) {
+async function formatResult(result) {
   const lines = [];
 
   lines.push(result.dryRun ? "Dry run complete. No files were written." : "Project created.");
@@ -143,6 +179,42 @@ function formatResult(result) {
     lines.push("Actions:");
     for (const action of result.actions) {
       lines.push(`- ${action}`);
+    }
+  }
+
+  const githubPlan = planGithubCreation({
+    github: result.github.enabled,
+    dryRun: result.dryRun || result.github.dryRun,
+    name: result.projectSlug,
+    owner: result.variables.GITHUB_OWNER,
+    description: result.variables.PROJECT_DESCRIPTION,
+    public: result.github.public,
+    private: result.github.private,
+    source: result.targetDir,
+    remote: "origin"
+  });
+
+  if (githubPlan.enabled) {
+    lines.push("GitHub:");
+    lines.push(`- ${githubPlan.dryRun ? "planned" : "created"}: ${githubPlan.shellCommand}`);
+  }
+
+  const issuePlan = await planInitialIssues({
+    issuePlan: result.issuePlan.enabled,
+    dryRun: true,
+    repo: result.variables.GITHUB_OWNER
+      ? `${result.variables.GITHUB_OWNER}/${result.projectSlug}`
+      : result.projectSlug,
+    context: result.variables
+  });
+
+  if (issuePlan.enabled) {
+    lines.push("Initial issues:");
+    for (const issue of issuePlan.issues) {
+      lines.push(`- ${issue.title}`);
+    }
+    if (result.issuePlanResult?.outputPath) {
+      lines.push(`Issue plan file: ${result.issuePlanResult.outputPath}`);
     }
   }
 

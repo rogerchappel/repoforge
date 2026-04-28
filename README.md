@@ -1,19 +1,28 @@
 # repoforge
 
-Status: work in progress.
+Status: V1 implementation in progress and publish-ready checks are wired.
 
-`repoforge` is planned as a local-first CLI for deterministic OSS repository
-generation, starting with
+`repoforge` is a local-first CLI for deterministic OSS repository generation,
+starting with
 [`agentic-oss-template`](https://github.com/rogerchappel/agentic-oss-template)
 as the default scaffold.
 
-The intended V1 command is:
+## Usage
 
 ```sh
-repoforge new <name>
+npx repoforge new <name>
 ```
 
-## Planned V1
+Useful options:
+
+- `--config <path>` reads `repoforge.config.json` from a specific path.
+- `--target-dir <dir>` writes the generated repository to a specific directory.
+- `--dry-run` prints planned actions without writing files or calling GitHub.
+- `--no-git` skips local git initialization.
+- `--github --public` or `--github --private` explicitly creates a GitHub repo with `gh`.
+- `--issue-plan` writes `.github/repoforge-initial-issues.md` into the generated repo.
+
+## V1 Scope
 
 The current PRD scopes `repoforge` around deterministic repository generation:
 
@@ -24,18 +33,22 @@ The current PRD scopes `repoforge` around deterministic repository generation:
 - optionally create a GitHub repository only when explicitly requested
 - generate first issues from a setup checklist
 
-## Current State
+## Publishing Status
 
-This repository currently contains the project scaffold, operating docs, and the
-PRD. Product implementation has not started yet.
+The repo is being prepared for npm and Homebrew publishing, but publish steps are
+not run automatically. CI validates the CLI, scaffold, smoke generation, and
+`npm pack --dry-run`.
 
 The source PRD is at [docs/PRD.md](docs/PRD.md).
 
-## Verification Target
+## Verification
 
-The planned V1 should be verifiable by generating a fixture repository into
-`/tmp/repoforge-smoke`, confirming variables are replaced, and running the
-project test suite.
+```sh
+npm run validate
+npm test
+npm run smoke
+npm run pack:dry-run
+```
 
 ## Development
 

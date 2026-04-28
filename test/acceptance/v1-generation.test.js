@@ -215,3 +215,29 @@ test("--dry-run reports planned generation without writing output", () => {
   assert.match(result.combinedOutput, /dry run|would create|planned/i);
   assert.deepEqual(listRelativeFiles(tempRoot), ["repoforge.config.json"]);
 });
+
+test("--issue-plan writes an initial issue handoff file", () => {
+  const tempRoot = makeTempDir();
+  const outputDir = path.join(tempRoot, "fixture-v1-app");
+  const configPath = writeRunConfig(tempRoot);
+
+  const result = runRepoforge([
+    "new",
+    "fixture-v1-app",
+    "--config",
+    configPath,
+    "--target-dir",
+    outputDir,
+    "--issue-plan",
+  ], { cwd: tempRoot });
+
+  assert.equal(result.status, 0, result.combinedOutput);
+
+  const issuePlanPath = path.join(outputDir, ".github", "repoforge-initial-issues.md");
+  const issuePlan = readFileSync(issuePlanPath, "utf8");
+
+  assert.match(issuePlan, /# Initial Issue Plan/);
+  assert.match(issuePlan, /task: verify generated scaffold/);
+  assert.match(issuePlan, /gh issue create/);
+  assert.doesNotMatch(issuePlan, /\{\{GITHUB_REPO\}\}/);
+});

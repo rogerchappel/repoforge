@@ -1,8 +1,7 @@
 # GitHub Creation And Issue Planning
 
 `repoforge` stays local-first by default. GitHub repository creation and issue
-planning are explicit integration steps that a CLI can call only when requested
-by flags.
+planning are explicit integration steps that run only when requested by flags.
 
 ## Expected Flags
 
@@ -11,7 +10,7 @@ by flags.
 | `--github` | Opt in to GitHub repository creation through the `gh` CLI. Without this flag, no repository is created. |
 | `--public` | Plan or create the repository as public. Mutually exclusive with `--private`. |
 | `--private` | Plan or create the repository as private. This is the default visibility when neither visibility flag is provided. |
-| `--issue-plan` | Generate initial issue payloads from `templates/issues/initial-issues.json`. |
+| `--issue-plan` | Generate `.github/repoforge-initial-issues.md` from `templates/issues/initial-issues.json`. |
 | `--dry-run` | Print planned commands and issue payloads without creating repositories or issues. This should be the default integration mode until execution is explicit. |
 
 ## Repository Creation Helper
@@ -28,7 +27,10 @@ by flags.
 The helper does not read tokens or environment variables. Authentication is left
 to the installed `gh` CLI and its existing credential handling.
 
-Example integration shape:
+The CLI passes the generated repository path as `--source` and configures the
+`origin` remote when `gh repo create` succeeds.
+
+Example helper usage:
 
 ```js
 import { createGithubRepository, planGithubCreation } from "./src/github.js";
@@ -62,10 +64,12 @@ if (plan.willCreate) {
   and `gh issue create` command metadata.
 - `renderIssue(issue, context)`: renders one issue using template variables.
 - `buildIssueCreateArgs(issue, repo)`: returns argv suitable for `gh issue create`.
+- `writeInitialIssuesFile(options)`: writes a Markdown issue handoff file into
+  the generated repository.
 
-The issue helper only plans issue creation. A future CLI integration can write
-each body to a temporary file and call `gh issue create --body-file` if command
-length or shell rendering becomes a concern.
+The CLI currently writes a reviewable issue handoff file. A future integration
+can call `gh issue create --body-file` for each rendered issue after maintainer
+approval.
 
 Example integration shape:
 
