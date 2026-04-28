@@ -1,18 +1,19 @@
-name: CI
+name: Package dry run
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
+    paths:
+      - ".github/workflows/package-dry-run.yml"
+      - "templates/npm-package/**"
+      - "docs/npm-publishing.md"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate:
-    name: Validate repository and package scaffold
+  npm-pack-dry-run:
+    name: npm pack dry run
     runs-on: ubuntu-latest
 
     steps:
@@ -23,10 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Validate repository template
-        shell: bash
-        run: bash scripts/validate-template.sh
 
       - name: Prepare npm package fixture
         shell: bash
@@ -70,7 +67,7 @@ jobs:
           node --input-type=module <<'EOF'
           import { createMessage } from "./src/index.js";
 
-          if (createMessage("ci") !== "hello ci") {
+          if (createMessage("dry-run") !== "hello dry-run") {
             throw new Error("package smoke import failed");
           }
           EOF

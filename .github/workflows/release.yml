@@ -1,18 +1,27 @@
-name: CI
+name: Release
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
+    tags:
+      - "v*.*.*"
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version or tag, for example v1.2.3"
+        required: true
+        type: string
+      publish_npm:
+        description: "Request npm publish readiness review; this workflow does not publish."
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
 
 jobs:
-  validate:
-    name: Validate repository and package scaffold
+  release-readiness:
+    name: Release readiness
     runs-on: ubuntu-latest
 
     steps:
@@ -70,7 +79,7 @@ jobs:
           node --input-type=module <<'EOF'
           import { createMessage } from "./src/index.js";
 
-          if (createMessage("ci") !== "hello ci") {
+          if (createMessage("release") !== "hello release") {
             throw new Error("package smoke import failed");
           }
           EOF
@@ -78,3 +87,28 @@ jobs:
       - name: Dry-run npm package
         working-directory: ${{ env.fixture }}
         run: npm pack --dry-run
+
+      - name: Record release candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          release_ref="${{ inputs.version || github.ref_name }}"
+          {
+            echo "Release candidate: ${release_ref}"
+            echo "Publishing status: disabled in automation"
+            echo "npm publish command is intentionally not run by this workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  publish-gate:
+    name: Publishing gate
+    needs: release-readiness
+    if: ${{ inputs.publish_npm == true }}
+    runs-on: ubuntu-latest
+    environment: npm-publish
+
+    steps:
+      - name: Confirm publishing remains manual
+        run: |
+          echo "Publishing is gated by the npm-publish environment and intentionally disabled."
+          echo "Use docs/npm-publishing.md for the reviewed manual publish procedure."

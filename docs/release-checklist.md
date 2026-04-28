@@ -32,6 +32,9 @@ to the project, but do not skip verification and rollback notes.
 
 - [ ] Smallest relevant test or smoke check has run.
 - [ ] Build or packaging command has run when artifacts are published.
+- [ ] CI has run install, optional lint, test, smoke, template validation, and
+      package dry-run checks where applicable.
+- [ ] `npm pack --dry-run` output has been reviewed for npm packages.
 - [ ] Documentation links or generated docs are checked when docs changed.
 - [ ] Manual QA notes are captured when automated coverage is not enough.
 - [ ] Known limitations or skipped checks are documented.
@@ -53,6 +56,12 @@ to the project, but do not skip verification and rollback notes.
       artifact is published only if applicable.
 - [ ] Checksums, provenance, or signatures are published when the project
       requires them.
+- [ ] npm publishing, if enabled, is approved through the protected
+      `npm-publish` environment or equivalent maintainer gate.
+- [ ] npm provenance or trusted publishing is configured before automated npm
+      publishing is enabled.
+- [ ] Homebrew formula or tap changes, if any, are reviewed separately and point
+      at immutable release artifacts with verified checksums.
 - [ ] Announcement channels are updated when relevant.
 
 ## 7. After Release

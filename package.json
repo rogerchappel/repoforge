@@ -1,0 +1,19 @@
+{
+  "name": "repoforge",
+  "version": "0.1.0",
+  "description": "Local-first repository scaffolding CLI for agentic open source projects.",
+  "type": "module",
+  "bin": {
+    "repoforge": "./bin/repoforge.js"
+  },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "smoke": "node ./bin/repoforge.js --help"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
