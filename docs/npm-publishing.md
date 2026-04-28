@@ -47,5 +47,66 @@ Before publishing a generated package:
 5. Run `npm pack --dry-run` and inspect the package contents.
 6. Publish from a clean, tagged release commit.
 
+## Automation In This Repository
+
+Repoforge validates the optional npm scaffold without publishing it:
+
+- CI copies `templates/npm-package/` into a temporary fixture, replaces scaffold
+  placeholders with valid package metadata, runs `npm install`, runs
+  `npm run lint --if-present`, runs `npm test`, smoke-imports the package, and
+  runs `npm pack --dry-run`.
+- The package dry-run workflow repeats the npm package readiness checks when the
+  scaffold or npm publishing documentation changes.
+- The release workflow performs readiness checks for tags and manual dispatches,
+  but it does not call `npm publish`.
+
+This keeps normal CI free of npm tokens and registry secrets.
+
+## Provenance And Trusted Publishing
+
+For a real generated package, prefer npm trusted publishing from GitHub Actions
+or npm provenance over a long-lived `NPM_TOKEN`.
+
+Recommended future publishing shape:
+
+1. Protect an `npm-publish` GitHub environment with maintainer approval.
+2. Give the publish job `contents: read` and `id-token: write`; do not grant
+   broader permissions to CI jobs that only test or dry-run packages.
+3. Configure the package on npm for trusted publishing, or publish with
+   provenance from an approved workflow run.
+4. Run the same checks as CI immediately before publishing.
+5. Publish public packages with a reviewed command such as:
+
+```sh
+npm publish --provenance --access public
+```
+
+Use `--access public` only for public scoped packages. Private packages and
+organization policies may require different npm access settings.
+
+## Package Readiness Review
+
+Before enabling any publish command, confirm:
+
+- `name`, `version`, `description`, `author`, `license`, `exports`, and `files`
+  are final and intentional.
+- `README.md` describes installation, usage, support, security reporting, and
+  license terms accurately.
+- `npm pack --dry-run` includes only intended files.
+- Tests cover public behavior, not only the scaffold example.
+- The release notes include verification and rollback or deprecation guidance.
+- A maintainer has approved the exact package contents for the target version.
+
+## Homebrew Readiness
+
+Do not publish a Homebrew tap from this scaffold. If a generated project later
+ships a CLI, treat Homebrew as a separate release channel:
+
+- publish or identify the immutable release artifact first;
+- compute checksums from that artifact;
+- draft a formula with dependency metadata and a `test do` block;
+- review whether the project should maintain its own tap;
+- update the tap only after the package or binary release is approved.
+
 This scaffold is a starting point only. It is not release automation, security
 policy, or a substitute for a maintainer review before publishing.
