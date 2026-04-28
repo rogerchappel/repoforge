@@ -10,19 +10,79 @@ Move quickly, but keep every change reviewable, reversible, verifiable, and safe
 
 - Work on a branch for all repository changes.
 - Branch from the latest `main` before editing.
+- Rebase on the latest `main` before opening a pull request.
 - Do not work directly on `main` unless a maintainer explicitly says this repository is being treated as personal scratch space.
 - Do not merge without explicit human approval.
 - Do not rewrite shared history unless explicitly instructed.
+
+## Concurrent Agent And PR Split Policy
+
+When work is delegated to multiple agents or split into concurrent workstreams,
+each workstream must be independently reviewable.
+
+Hard rules:
+
+- One agent or workstream owns one branch.
+- One agent or workstream opens one pull request.
+- Every delegated agent must submit a PR. This is a hard line, not a preference.
+- One PR should contain one reviewable intent.
+- The final integration PR may contain only integration glue, conflict
+  resolution, documentation that connects the parts, or end-to-end verification
+  updates.
+- Do not put several agents' work on one shared branch unless a maintainer
+  explicitly asks for one combined PR.
+- Do not wait until after implementation to split PRs. Create or prepare the
+  branch and PR boundary before or immediately after each workstream's first
+  commit.
+
+For stacked PRs:
+
+- Each PR base must be the previous PR's head branch.
+- Each PR head must contain only that workstream's commits on top of its base.
+- Do not merge lower stack branches into higher stack branches to update them.
+- Do not create merge commits between stacked branches unless a maintainer
+  explicitly asks for merge commits.
+- Prefer rebasing or cherry-picking to keep each PR diff clean.
+- If a lower PR changes after review starts, update downstream stacks with a
+  clean rebase and force-push only branches created for the current task.
+- Never force-push shared or maintainer-owned branches without explicit
+  approval.
+
+Before reporting that concurrent work is submitted, verify:
+
+- every workstream has a branch on the remote;
+- every workstream has an open PR;
+- every PR diff contains only its intended workstream;
+- every PR commit list is clean enough to review;
+- CI or the smallest relevant verification has run or is clearly pending.
 
 ## Atomic Commits
 
 - Use Conventional Commits.
 - One commit should represent one reviewable intent.
 - Keep unrelated docs, code, tests, generated files, dependency changes, and CI changes in separate commits.
-- Prefer one clean commit over several artificial commits.
+- Prefer one clean commit over several artificial commits only when the commit
+  changes 3 files or fewer and remains one reviewable intent.
 - Prefer several clean commits over one mixed commit.
-- Hard gate: if a change touches more than 3 files, split it into smaller commits unless it is a scaffold, generated output, lockfile-only dependency update, or clearly mechanical repository-wide rename.
+- Hard gate: no commit may change more than 3 files unless a maintainer
+  explicitly approves the exception before the commit.
+- If a task touches more than 3 files, split it before committing.
+- Do not spread a large number of file changes across a few broad commits.
+- Scaffold drops, generated output, lockfile-only dependency updates, and
+  mechanical repository-wide renames still need explicit maintainer approval
+  when they exceed 3 files.
 - If a task may touch more than 3 files, write the split plan before editing.
+- If the correct split is unclear, stop and propose the commit split before
+  staging.
+
+Tests:
+
+- One test intent per commit.
+- Separate unrelated unit tests, regression tests, fixture tests, and smoke tests
+  into separate commits.
+- Multiple tests for the same behavior in the same test file may share one
+  commit only when the commit still changes 3 files or fewer and remains one
+  reviewable intent.
 
 Allowed commit types:
 
