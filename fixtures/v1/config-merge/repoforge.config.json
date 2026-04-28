@@ -1,0 +1,13 @@
+{
+  "projectDescription": "Description from config fixture",
+  "githubOwner": "config-fixture-owner",
+  "license": "MIT",
+  "defaultBranch": "main",
+  "git": false,
+  "variables": {
+    "AUTHOR_NAME": "Config Fixture Author",
+    "INSTALL_COMMAND": "npm install",
+    "USAGE_COMMAND": "node index.js",
+    "PRIMARY_VERIFICATION_COMMAND": "npm test"
+  }
+}
