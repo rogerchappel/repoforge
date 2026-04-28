@@ -3,7 +3,7 @@
 This repository includes an optional npm package starting point at
 `templates/npm-package/`.
 
-Use it only when the project you create from this template needs to publish a
+Use it only when the project you create with repoforge needs to publish a
 small JavaScript package to npm. Do not copy it into projects that are docs-only,
 GitHub Action-only, or otherwise do not need Node package metadata.
 
