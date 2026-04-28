@@ -1,0 +1,84 @@
+{
+  "name": "Initial repository setup",
+  "description": "Default setup issues generated for a new repoforge repository.",
+  "issues": [
+    {
+      "id": "verify-scaffold",
+      "title": "task: verify generated scaffold",
+      "labels": ["agent-task", "setup"],
+      "body": {
+        "summary": "Confirm the generated repository is complete, variables are replaced, and local verification passes.",
+        "sections": [
+          {
+            "heading": "Context",
+            "items": [
+              "Repository: {{GITHUB_OWNER}}/{{GITHUB_REPO}}",
+              "Default branch: {{DEFAULT_BRANCH}}",
+              "Primary verification command: {{PRIMARY_VERIFICATION_COMMAND}}"
+            ]
+          },
+          {
+            "heading": "Expected Blast Radius",
+            "items": [
+              "Documentation, package metadata, and generated workflow files only.",
+              "Risk level: low unless repository-specific secrets or deployment settings are added."
+            ]
+          }
+        ]
+      },
+      "checklist": [
+        "Run {{PRIMARY_VERIFICATION_COMMAND}} locally.",
+        "Run `rg '\\{\\{[A-Z0-9_]+\\}\\}'` and replace any unintended placeholders.",
+        "Confirm README, LICENSE, SECURITY, CONTRIBUTING, and AGENTS instructions match the project.",
+        "Return a review pack with verification output and remaining decisions."
+      ]
+    },
+    {
+      "id": "prepare-first-release",
+      "title": "task: prepare first release checklist",
+      "labels": ["agent-task", "release"],
+      "body": {
+        "summary": "Prepare the repository for its first tagged release without publishing until a maintainer approves.",
+        "sections": [
+          {
+            "heading": "Scope",
+            "items": [
+              "Review changelog, roadmap, package metadata, and release process docs.",
+              "Do not publish packages, create secrets, or change production configuration."
+            ]
+          }
+        ]
+      },
+      "checklist": [
+        "Confirm package name, license, and repository URLs.",
+        "Confirm release checklist steps are project-specific.",
+        "Identify required human decisions before the first release.",
+        "Document rollback notes for any release automation that will be enabled later."
+      ]
+    },
+    {
+      "id": "triage-template-fit",
+      "title": "task: triage template fit",
+      "labels": ["agent-task", "maintenance"],
+      "body": {
+        "summary": "Review generated defaults and remove anything that does not fit this repository.",
+        "sections": [
+          {
+            "heading": "Out Of Scope",
+            "items": [
+              "No dependency upgrades.",
+              "No CI or deployment changes unless a maintainer opens a separate task.",
+              "No public API changes."
+            ]
+          }
+        ]
+      },
+      "checklist": [
+        "Review issue templates and PR template for project fit.",
+        "Review security policy and disclosure instructions.",
+        "Review docs and examples for claims that do not match current implementation.",
+        "Open follow-up issues for any non-trivial removals or rewrites."
+      ]
+    }
+  ]
+}
