@@ -1,0 +1,20 @@
+{
+  "name": "{{PACKAGE_NAME}}",
+  "version": "0.1.0",
+  "description": "{{PACKAGE_DESCRIPTION}}",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "{{AUTHOR_NAME}}",
+  "license": "{{LICENSE}}"
+}

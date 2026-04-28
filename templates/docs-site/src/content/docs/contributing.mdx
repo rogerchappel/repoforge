@@ -1,0 +1,39 @@
+---
+title: Contributing
+description: How to contribute safely to {{PROJECT_NAME}}.
+---
+
+# Contributing
+
+Contributions should be small, reviewable, and verified before review.
+
+## Before You Start
+
+- Read the root `README.md`.
+- Check existing issues and pull requests.
+- Confirm the change applies to this generated repository.
+- Create a branch before editing.
+
+## Pull Requests
+
+- Keep one reviewable intent per pull request.
+- Use Conventional Commits where the repository requires them.
+- Update documentation when behavior or workflow expectations change.
+- Include verification results in the pull request.
+
+## Agent-Assisted Work
+
+If a coding agent contributes changes, keep the same review standards:
+
+- state the task objective and risk level before editing
+- inspect `git status` and `git diff` before staging
+- stage only related files
+- return a review pack with summary, verification, risk, and rollback notes
+
+## Verification
+
+Run the primary local check unless a narrower check is more appropriate:
+
+```sh
+{{PRIMARY_VERIFICATION_COMMAND}}
+```

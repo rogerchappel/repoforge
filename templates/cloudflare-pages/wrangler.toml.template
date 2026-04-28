@@ -1,0 +1,5 @@
+name = "{{CLOUDFLARE_PROJECT_NAME}}"
+pages_build_output_dir = "docs-site/dist"
+
+[vars]
+PROJECT_NAME = "{{PROJECT_NAME}}"

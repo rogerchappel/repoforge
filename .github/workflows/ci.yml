@@ -1,0 +1,229 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-hygiene:
+    name: Repository hygiene
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Validate required top-level files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_files=(
+            .editorconfig
+            .gitignore
+            AGENTS.md
+            CHANGELOG.md
+            CODE_OF_CONDUCT.md
+            CONTRIBUTING.md
+            README.md
+            LICENSE
+            ROADMAP.md
+            SECURITY.md
+          )
+
+          for file in "${required_files[@]}"; do
+            test -s "$file"
+          done
+
+      - name: Validate required docs
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_docs=(
+            docs/PRD.md
+            docs/agent-workflow.md
+            docs/agent-prompts.md
+            docs/branchbrief.md
+            docs/cloudflare-pages.md
+            docs/copilot.md
+            docs/dependency-policy.md
+            docs/github-actions.md
+            docs/llm-policy.md
+            docs/npm-publishing.md
+            docs/release-checklist.md
+            docs/release-process.md
+            docs/repo-customisation.md
+            docs/security-policy.md
+            docs/template-variables.md
+          )
+
+          for doc in "${required_docs[@]}"; do
+            test -s "$doc"
+          done
+
+      - name: Validate required template directories
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_template_dirs=(
+            templates/agents
+            templates/branchbrief
+            templates/cloudflare-pages
+            templates/contributors
+            templates/dependabot
+            templates/docs-site
+            templates/github
+            templates/github/ISSUE_TEMPLATE
+            templates/github/workflows
+            templates/license
+            templates/npm-package
+            templates/readme
+            templates/release
+            templates/security
+          )
+
+          for dir in "${required_template_dirs[@]}"; do
+            test -d "$dir"
+          done
+
+      - name: Validate required template files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_template_files=(
+            templates/agents/AGENTS.snippet.md
+            templates/agents/AGENTS.template.md
+            templates/branchbrief/README.md
+            templates/cloudflare-pages/README.md
+            templates/cloudflare-pages/deploy-docs-cloudflare-pages.yml
+            templates/cloudflare-pages/wrangler.toml.template
+            templates/contributors/CODE_OF_CONDUCT.template.md
+            templates/contributors/CONTRIBUTING.template.md
+            templates/contributors/REVIEW_PACK.template.md
+            templates/dependabot/README.md
+            templates/docs-site/.gitignore
+            templates/docs-site/README.md
+            templates/docs-site/astro.config.mjs
+            templates/docs-site/package.json
+            templates/docs-site/src/content.config.ts
+            templates/docs-site/src/content/docs/getting-started.mdx
+            templates/docs-site/src/content/docs/index.mdx
+            templates/docs-site/tsconfig.json
+            templates/github/dependabot.yml
+            templates/github/pull_request_template.md
+            templates/github/ISSUE_TEMPLATE/agent_task.md
+            templates/github/ISSUE_TEMPLATE/bug_report.md
+            templates/github/ISSUE_TEMPLATE/feature_request.md
+            templates/github/workflows/branchbrief.yml
+            templates/github/workflows/ci.yml
+            templates/github/workflows/docs.yml
+            templates/license/LICENSE.MIT.template
+            templates/npm-package/README.md
+            templates/npm-package/package.json
+            templates/npm-package/src/index.js
+            templates/npm-package/test/index.test.js
+            templates/readme/README.template.md
+            templates/release/CHANGELOG.template.md
+            templates/release/ROADMAP.template.md
+            templates/release/release-checklist.template.md
+            templates/release/release-process.template.md
+            templates/security/SECURITY.github-private-reporting.template.md
+            templates/security/SECURITY.template.md
+          )
+
+          for file in "${required_template_files[@]}"; do
+            test -s "$file"
+          done
+
+      - name: Validate markdown files are not empty
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          markdown_count=0
+
+          while IFS= read -r -d '' file; do
+            markdown_count=$((markdown_count + 1))
+            test -s "$file"
+          done < <(find . -type f -name '*.md' -not -path './.git/*' -print0)
+
+          if [ "$markdown_count" -eq 0 ]; then
+            echo "No markdown files found."
+            exit 1
+          fi
+
+      - name: Validate root docs do not contain unresolved placeholders
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          project_facing_root_docs=(
+            AGENTS.md
+            CHANGELOG.md
+            CODE_OF_CONDUCT.md
+            CONTRIBUTING.md
+            README.md
+            ROADMAP.md
+            SECURITY.md
+          )
+
+          if grep -nE '\{\{[A-Z0-9_][A-Z0-9_]*\}\}' "${project_facing_root_docs[@]}"; then
+            echo "Unexpected double-brace placeholders found in project-facing root docs."
+            echo "Reusable placeholders are allowed under templates/ and documented in docs/template-variables.md."
+            exit 1
+          fi
+
+      - name: Scan generated repository templates for stale repository language
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          generated_repository_file_list="$(mktemp)"
+          trap 'rm -f "$generated_repository_file_list"' EXIT
+
+          find templates \
+            -type f \
+            \( \
+              -name '*.md' \
+              -o -name '*.mdx' \
+              -o -name '*.json' \
+              -o -name '*.js' \
+              -o -name '*.mjs' \
+              -o -name '*.ts' \
+              -o -name '*.toml' \
+              -o -name '*.yml' \
+              -o -name '*.yaml' \
+              -o -name '*.template' \
+            \) \
+            -not -path 'templates/README.md' \
+            -not -path 'templates/*/README.md' \
+            -print |
+            sort > "$generated_repository_file_list"
+
+          if [ ! -s "$generated_repository_file_list" ]; then
+            echo "No generated repository template files found."
+            exit 1
+          fi
+
+          stale_pattern='agentic-oss-template|this template repository|Use this template|generated from this template'
+          stale_matches=0
+
+          while IFS= read -r file; do
+            if grep -nE "$stale_pattern" "$file"; then
+              stale_matches=1
+            fi
+          done < "$generated_repository_file_list"
+
+          if [ "$stale_matches" -ne 0 ]; then
+            echo "Generated repository template files contain stale template repository language."
+            exit 1
+          fi
