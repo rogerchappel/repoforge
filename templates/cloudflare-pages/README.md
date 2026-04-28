@@ -11,7 +11,7 @@ Cloudflare Pages is not required by the base template. Copy these files only whe
 
 ## Recommended Default
 
-For most projects, use Cloudflare dashboard-managed Pages builds instead of GitHub Actions deployment. Dashboard-managed builds usually avoid repository workflow changes and do not require this template repository to store secrets.
+For most projects, use Cloudflare dashboard-managed Pages builds instead of GitHub Actions deployment. Dashboard-managed builds usually avoid repository workflow changes and do not require this repository to store secrets.
 
 Recommended dashboard placeholders for the provided `templates/docs-site/` package:
 

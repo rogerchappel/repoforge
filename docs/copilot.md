@@ -2,7 +2,7 @@
 
 Generated repositories can configure GitHub Copilot with repository-specific instructions. These instructions help Copilot match the repository's workflow, risk policy, verification expectations, and coding conventions.
 
-Copilot configuration is optional. Projects can use this template without enabling GitHub Copilot.
+Copilot configuration is optional. Projects can use repoforge-generated scaffolds without enabling GitHub Copilot.
 
 ## Recommended File
 
