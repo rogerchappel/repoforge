@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "description": "Local-first repository scaffolding CLI for agentic open source projects.",
   "type": "module",
+  "files": [
+    "bin/",
+    "docs/",
+    "scaffold/",
+    "src/",
+    "templates/issues/",
+    "README.md",
+    "LICENSE"
+  ],
   "bin": {
     "repoforge": "./bin/repoforge.js"
   },
@@ -10,7 +19,11 @@
     ".": "./src/index.js"
   },
   "scripts": {
-    "smoke": "node ./bin/repoforge.js --help"
+    "lint": "node --check bin/repoforge.js && find src scripts test -name '*.js' -print0 | xargs -0 -n1 node --check",
+    "test": "node --test test/acceptance/v1-generation.test.js",
+    "smoke": "node scripts/smoke-test.js",
+    "validate": "bash scripts/validate-template.sh",
+    "pack:dry-run": "npm pack --dry-run"
   },
   "engines": {
     "node": ">=20"

@@ -73,6 +73,10 @@ export function mergeOptions(config, cliOptions) {
     scaffoldDir: config.scaffoldDir,
     dryRun: cliOptions.dryRun ?? Boolean(config.dryRun),
     git: cliOptions.git ?? config.git ?? true,
+    github: cliOptions.github ?? Boolean(config.github),
+    public: cliOptions.public ?? Boolean(config.public),
+    private: cliOptions.private ?? Boolean(config.private),
+    issuePlan: cliOptions.issuePlan ?? Boolean(config.issuePlan),
     variables
   };
 }

@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import { loadConfig, mergeOptions, RepoForgeError } from "./config.js";
 import { assertDirectoryAvailable, copyDirectory, pathExists } from "./fs.js";
 import { initGitRepository } from "./git.js";
+import { createGithubRepository } from "./github.js";
+import { writeInitialIssuesFile } from "./issues.js";
 import { buildTemplateVariables } from "./template.js";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -25,6 +27,15 @@ export async function generateProject(options) {
   const scaffoldDir = path.resolve(cwd, merged.scaffoldDir ?? DEFAULT_SCAFFOLD_DIR);
   const dryRun = Boolean(merged.dryRun);
   const shouldInitGit = Boolean(merged.git) && !dryRun;
+  const github = {
+    enabled: Boolean(merged.github),
+    public: Boolean(merged.public),
+    private: Boolean(merged.private),
+    dryRun
+  };
+  const issuePlan = {
+    enabled: Boolean(merged.issuePlan)
+  };
   const variables = buildTemplateVariables({
     ...merged,
     projectName,
@@ -42,6 +53,14 @@ export async function generateProject(options) {
     actions.push("initialize git repository");
   }
 
+  if (github.enabled) {
+    actions.push("create GitHub repository with gh");
+  }
+
+  if (issuePlan.enabled) {
+    actions.push("generate initial issue plan");
+  }
+
   if (dryRun) {
     return {
       dryRun,
@@ -52,6 +71,10 @@ export async function generateProject(options) {
       configPath,
       variables,
       gitInitialized: false,
+      github,
+      issuePlan,
+      githubResult: null,
+      issuePlanResult: null,
       actions
     };
   }
@@ -69,6 +92,30 @@ export async function generateProject(options) {
     gitInitialized = await initGitRepository(targetDir, variables.DEFAULT_BRANCH);
   }
 
+  let githubResult = null;
+  if (github.enabled) {
+    githubResult = await createGithubRepository({
+      github: true,
+      dryRun: false,
+      name: projectSlug,
+      owner: variables.GITHUB_OWNER,
+      description: variables.PROJECT_DESCRIPTION,
+      public: github.public,
+      private: github.private,
+      source: targetDir,
+      remote: "origin"
+    });
+  }
+
+  let issuePlanResult = null;
+  if (issuePlan.enabled) {
+    issuePlanResult = await writeInitialIssuesFile({
+      targetDir,
+      repo: variables.GITHUB_OWNER ? `${variables.GITHUB_OWNER}/${projectSlug}` : projectSlug,
+      context: variables
+    });
+  }
+
   return {
     dryRun,
     projectName,
@@ -78,6 +125,10 @@ export async function generateProject(options) {
     configPath,
     variables,
     gitInitialized,
+    github,
+    issuePlan,
+    githubResult,
+    issuePlanResult,
     actions
   };
 }

@@ -35,6 +35,7 @@ is_allowed_placeholder_path() {
   case "$1" in
     templates/* | \
     scaffold/* | \
+    fixtures/* | \
     docs/PRD.md | \
     docs/copilot.md | \
     docs/npm-publishing.md | \

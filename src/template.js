@@ -10,6 +10,7 @@ export function buildTemplateVariables(options) {
   const variables = {
     PROJECT_NAME: options.projectName,
     PROJECT_SLUG: options.projectSlug,
+    GITHUB_REPO: options.projectSlug,
     PROJECT_DESCRIPTION: options.projectDescription ?? DEFAULTS.PROJECT_DESCRIPTION,
     GITHUB_OWNER: options.githubOwner ?? DEFAULTS.GITHUB_OWNER,
     LICENSE: options.license ?? DEFAULTS.LICENSE,
