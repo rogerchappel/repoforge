@@ -34,6 +34,7 @@ check_dir() {
 is_allowed_placeholder_path() {
   case "$1" in
     templates/* | \
+    scaffold/* | \
     docs/PRD.md | \
     docs/copilot.md | \
     docs/npm-publishing.md | \
