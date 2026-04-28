@@ -37,56 +37,20 @@ jobs:
         shell: bash
         run: bash scripts/validate-template.sh
 
-      - name: Prepare npm package fixture
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          fixture="${RUNNER_TEMP}/repoforge-npm-package"
-          cp -R templates/npm-package "$fixture"
-
-          package_name_placeholder="$(printf '{{%s}}' PACKAGE_NAME)"
-          package_description_placeholder="$(printf '{{%s}}' PACKAGE_DESCRIPTION)"
-          author_name_placeholder="$(printf '{{%s}}' AUTHOR_NAME)"
-          license_placeholder="$(printf '{{%s}}' LICENSE)"
-
-          find "$fixture" -type f -print0 | xargs -0 sed -i \
-            -e "s|${package_name_placeholder}|@repoforge/smoke-package|g" \
-            -e "s|${package_description_placeholder}|Repoforge smoke package fixture|g" \
-            -e "s|${author_name_placeholder}|Repoforge Maintainers|g" \
-            -e "s|${license_placeholder}|MIT|g"
-
-          echo "fixture=$fixture" >> "$GITHUB_ENV"
-
       - name: Install package dependencies
-        working-directory: ${{ env.fixture }}
         run: npm install
 
-      - name: Lint package if present
-        working-directory: ${{ env.fixture }}
+      - name: Lint package
         run: npm run lint --if-present
 
       - name: Test package
-        working-directory: ${{ env.fixture }}
         run: npm test
 
-      - name: Smoke package import
-        working-directory: ${{ env.fixture }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          node --input-type=module <<'EOF'
-          import { createMessage } from "./src/index.js";
-
-          if (createMessage("release") !== "hello release") {
-            throw new Error("package smoke import failed");
-          }
-          EOF
+      - name: Smoke CLI
+        run: npm run smoke
 
       - name: Dry-run npm package
-        working-directory: ${{ env.fixture }}
-        run: npm pack --dry-run
+        run: npm run pack:dry-run
 
       - name: Record release candidate
         shell: bash

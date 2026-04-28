@@ -1,112 +1,76 @@
-# Optional npm Package Scaffold
+# npm Publishing Readiness
 
-This repository includes an optional npm package starting point at
-`templates/npm-package/`.
+`repoforge` is structured as an npm-installable CLI package, but this repository
+does not publish to npm automatically.
 
-Use it only when the project you create with repoforge needs to publish a
-small JavaScript package to npm. Do not copy it into projects that are docs-only,
-GitHub Action-only, or otherwise do not need Node package metadata.
+## Current Package Shape
 
-## What The Scaffold Provides
+- Package name: `repoforge`
+- CLI bin: `repoforge`
+- Runtime: Node.js 20+
+- Module format: ESM
+- Default scaffold assets: `scaffold/agentic-oss-template/`
+- Public API exports: `src/index.js`
 
-- Minimal ESM package structure.
-- Placeholder package metadata for name, description, author, and license.
-- A tiny exported function in `src/index.js`.
-- A Node built-in test in `test/index.test.js`.
-- No runtime dependencies.
-- No top-level repository `package.json`.
+## Local Checks
 
-## Use The Scaffold
-
-1. Copy `templates/npm-package/` into the root of the generated repository.
-2. Replace these placeholders:
-   - `{{PACKAGE_NAME}}`
-   - `{{PACKAGE_DESCRIPTION}}`
-   - `{{AUTHOR_NAME}}`
-   - `{{LICENSE}}`
-3. Update `src/index.js` with real package code.
-4. Update `test/index.test.js` with behavior that matches the package.
-5. Run the package checks from inside the copied package directory:
+Run these checks before any release candidate:
 
 ```sh
+npm install
+npm run validate
+npm run lint
 npm test
+npm run smoke
+npm run pack:dry-run
 ```
 
-The scaffold intentionally does not include TypeScript. If the generated repository
-chooses TypeScript, add `typescript`, a `tsconfig.json`, and a `typecheck` script
-in that generated repository as a separate reviewable change.
+Inspect the `npm pack --dry-run` output before publishing. It should include the
+CLI entrypoint, source modules, default scaffold, issue templates, README,
+license, and publishing docs. It should not include test fixtures, local logs,
+or GitHub workflow internals unless intentionally added to `package.json`.
 
-## Before Publishing
+## Automation
 
-Before publishing a generated package:
+CI is publish-ready but non-publishing:
 
-1. Confirm the package name is available on npm.
-2. Confirm the chosen license is correct for the project.
-3. Add complete package documentation.
-4. Add meaningful tests for public behavior.
-5. Run `npm pack --dry-run` and inspect the package contents.
-6. Publish from a clean, tagged release commit.
+- `.github/workflows/ci.yml` runs validation, install, lint, tests, smoke, and
+  package dry-run on pull requests and `main`.
+- `.github/workflows/package-dry-run.yml` repeats package-readiness checks for
+  package/scaffold/publishing changes.
+- `.github/workflows/release.yml` runs release-readiness checks for tags and
+  manual dispatches. It does not call `npm publish`.
 
-## Automation In This Repository
+Normal CI requires no npm token, Homebrew token, or registry secret.
 
-Repoforge validates the optional npm scaffold without publishing it:
+## Future Publish Procedure
 
-- CI copies `templates/npm-package/` into a temporary fixture, replaces scaffold
-  placeholders with valid package metadata, runs `npm install`, runs
-  `npm run lint --if-present`, runs `npm test`, smoke-imports the package, and
-  runs `npm pack --dry-run`.
-- The package dry-run workflow repeats the npm package readiness checks when the
-  scaffold or npm publishing documentation changes.
-- The release workflow performs readiness checks for tags and manual dispatches,
-  but it does not call `npm publish`.
+Before enabling publishing:
 
-This keeps normal CI free of npm tokens and registry secrets.
-
-## Provenance And Trusted Publishing
-
-For a real generated package, prefer npm trusted publishing from GitHub Actions
-or npm provenance over a long-lived `NPM_TOKEN`.
-
-Recommended future publishing shape:
-
-1. Protect an `npm-publish` GitHub environment with maintainer approval.
-2. Give the publish job `contents: read` and `id-token: write`; do not grant
-   broader permissions to CI jobs that only test or dry-run packages.
-3. Configure the package on npm for trusted publishing, or publish with
-   provenance from an approved workflow run.
-4. Run the same checks as CI immediately before publishing.
-5. Publish public packages with a reviewed command such as:
+1. Confirm the package name, description, license, exports, bin, and `files`
+   list are final for the target release.
+2. Confirm `npm pack --dry-run` contains only intended files.
+3. Confirm README, security policy, changelog, and release notes are accurate.
+4. Protect an `npm-publish` GitHub environment with maintainer approval.
+5. Prefer npm trusted publishing or provenance over long-lived `NPM_TOKEN`
+   credentials.
+6. Use a reviewed publish command such as:
 
 ```sh
 npm publish --provenance --access public
 ```
 
-Use `--access public` only for public scoped packages. Private packages and
-organization policies may require different npm access settings.
-
-## Package Readiness Review
-
-Before enabling any publish command, confirm:
-
-- `name`, `version`, `description`, `author`, `license`, `exports`, and `files`
-  are final and intentional.
-- `README.md` describes installation, usage, support, security reporting, and
-  license terms accurately.
-- `npm pack --dry-run` includes only intended files.
-- Tests cover public behavior, not only the scaffold example.
-- The release notes include verification and rollback or deprecation guidance.
-- A maintainer has approved the exact package contents for the target version.
+Do not publish until a maintainer has approved the exact package contents for
+the target version.
 
 ## Homebrew Readiness
 
-Do not publish a Homebrew tap from this scaffold. If a generated project later
-ships a CLI, treat Homebrew as a separate release channel:
+Do not publish a Homebrew tap from this repository yet. If Homebrew distribution
+is added later:
 
-- publish or identify the immutable release artifact first;
-- compute checksums from that artifact;
-- draft a formula with dependency metadata and a `test do` block;
-- review whether the project should maintain its own tap;
-- update the tap only after the package or binary release is approved.
-
-This scaffold is a starting point only. It is not release automation, security
-policy, or a substitute for a maintainer review before publishing.
+- publish or identify the immutable npm package or release tarball first;
+- compute checksums from the release artifact;
+- draft a formula with dependency metadata and a `test do` block that runs
+  `repoforge --help`;
+- decide whether the formula belongs in a project tap;
+- update the tap only after the package release is approved.
