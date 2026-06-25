@@ -11,6 +11,22 @@ The intended V1 command is:
 repoforge new <name>
 ```
 
+## Usage Today
+
+The generator CLI is not implemented yet. Until it is, use the repository as a
+planning and scaffold-design workspace:
+
+```sh
+git clone https://github.com/rogerchappel/repoforge.git
+cd repoforge
+sed -n '1,220p' docs/PRD.md
+sed -n '1,220p' docs/TASKS.md
+```
+
+When implementation starts, the first useful local smoke should create a
+throwaway repository under `/tmp/repoforge-smoke` and verify that scaffold
+variables, git initialization, and generated setup issues are deterministic.
+
 ## Planned V1
 
 The current PRD scopes `repoforge` around deterministic repository generation:
@@ -34,6 +50,14 @@ The source PRD is at [docs/PRD.md](docs/PRD.md).
 The planned V1 should be verifiable by generating a fixture repository into
 `/tmp/repoforge-smoke`, confirming variables are replaced, and running the
 project test suite.
+
+## Limitations
+
+- The CLI command is documented as intended behavior, not current behavior.
+- The repository should not be used to create production project scaffolds until
+  implementation and fixture-backed smoke tests exist.
+- GitHub repository creation must remain opt-in and documented before any
+  network side effect is added.
 
 ## Development
 
