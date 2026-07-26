@@ -68,6 +68,10 @@ jobs:
             test -s "$doc"
           done
 
+      - name: Run repository template validation
+        shell: bash
+        run: bash scripts/validate-template.sh
+
       - name: Validate required template directories
         shell: bash
         run: |

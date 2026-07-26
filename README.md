@@ -20,7 +20,7 @@ planning and scaffold-design workspace:
 git clone https://github.com/rogerchappel/repoforge.git
 cd repoforge
 sed -n '1,220p' docs/PRD.md
-sed -n '1,220p' docs/TASKS.md
+sed -n '1,220p' ROADMAP.md
 ```
 
 When implementation starts, the first useful local smoke should create a

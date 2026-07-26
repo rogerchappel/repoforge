@@ -157,6 +157,20 @@ for file in $required_docs; do
   check_file "$file"
 done
 
+printf '\nChecking Usage Today paths...\n'
+usage_today_paths="$(
+  sed -n '/^## Usage Today$/,/^## /p' README.md |
+    sed -n "s/^sed -n '[^']*' \\([^[:space:]]*\\)$/\\1/p"
+)"
+
+if [ -z "$usage_today_paths" ]; then
+  fail "README Usage Today section has no executable document paths"
+else
+  for file in $usage_today_paths; do
+    check_file "$file"
+  done
+fi
+
 printf '\nChecking required template directories...\n'
 for dir in $required_template_dirs; do
   check_dir "$dir"
