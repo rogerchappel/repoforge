@@ -68,7 +68,7 @@ jobs:
             test -s "$doc"
           done
 
-      - name: Run repository template validation
+      - name: Validate templates and execute generated scaffolds
         shell: bash
         run: bash scripts/validate-template.sh
 

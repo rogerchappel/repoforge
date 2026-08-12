@@ -78,6 +78,16 @@ Use the smallest relevant verification first:
 - CI or workflow changes: run the narrowest relevant local check, then confirm expected GitHub Actions behavior when possible.
 - Code changes in generated repositories: run the targeted test, typecheck, lint, build, or smoke command that proves the change.
 
+For any scaffold source change, run the executable template validator:
+
+```sh
+bash scripts/validate-template.sh
+```
+
+The validator materializes both Node.js scaffolds with fixture values, runs the
+npm package tests and package dry run, builds the docs site, and exercises the
+malformed-source regression check.
+
 If verification cannot be run, say why and provide the exact command or manual check a maintainer should run.
 
 ## Agent Contributions

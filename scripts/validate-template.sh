@@ -211,6 +211,20 @@ else
   pass "no unresolved placeholders outside allowed template paths"
 fi
 
+printf '\nExecuting generated scaffolds...\n'
+if bash scripts/smoke-scaffolds.sh; then
+  pass "npm package tests and package contents; docs site build"
+else
+  fail "generated scaffold smoke checks"
+fi
+
+printf '\nChecking malformed scaffold regression...\n'
+if bash scripts/test-smoke-scaffolds.sh; then
+  pass "malformed scaffold source is rejected"
+else
+  fail "malformed scaffold source was not rejected"
+fi
+
 if [ "$failed" -ne 0 ]; then
   printf '\nTemplate validation failed.\n' >&2
   exit 1
