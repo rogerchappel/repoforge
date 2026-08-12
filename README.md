@@ -64,6 +64,21 @@ project test suite.
 Use small, reviewable commits and keep behavior local-first by default. Network
 or GitHub actions must be explicit through flags and documented inputs.
 
+Run the complete template check before submitting scaffold changes. It copies
+and normalizes both executable scaffolds, tests and inspects the npm package,
+builds the docs site, and verifies malformed scaffold source is rejected:
+
+```sh
+bash scripts/validate-template.sh
+```
+
+To run only the executable scaffold checks:
+
+```sh
+bash scripts/smoke-scaffolds.sh
+bash scripts/test-smoke-scaffolds.sh
+```
+
 For repository workflow rules, see [AGENTS.md](AGENTS.md).
 
 ## License
