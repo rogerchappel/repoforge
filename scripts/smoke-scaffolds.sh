@@ -16,6 +16,7 @@ normalize_placeholders() {
       -e "s/${open_braces}PROJECT_NAME${close_braces}/Repoforge Smoke Project/g" \
       -e "s/${open_braces}PROJECT_DESCRIPTION${close_braces}/Repoforge scaffold smoke fixture/g" \
       -e "s#${open_braces}REPOSITORY_URL${close_braces}#https://github.com/example/repoforge-smoke#g" \
+      -e "s#${open_braces}DOCS_URL${close_braces}#https://example.com/repoforge-smoke/#g" \
       -e "s/${open_braces}RUNTIME_REQUIREMENT${close_braces}/Node.js 24/g" \
       -e "s/${open_braces}PACKAGE_MANAGER${close_braces}/npm/g" \
       -e "s/${open_braces}INSTALL_COMMAND${close_braces}/npm install/g" \
@@ -56,8 +57,18 @@ normalize_placeholders "$work_dir/docs-site"
 (
   cd "$work_dir/docs-site"
   npm install --ignore-scripts
-  npm run build
+  npm run build 2>&1 | tee build.log
+  if grep -Fq 'Entry docs → 404 was not found' build.log; then
+    printf 'Docs site build reported a missing 404 content entry.\n' >&2
+    exit 1
+  fi
+  if grep -Fq 'Sitemap integration requires the site' build.log; then
+    printf 'Docs site build skipped sitemap generation.\n' >&2
+    exit 1
+  fi
   test -f dist/index.html
+  test -f dist/404.html
+  find dist -maxdepth 1 -type f -name 'sitemap*.xml' -print -quit | grep -q .
 )
 
 printf 'Scaffold smoke checks passed.\n'
