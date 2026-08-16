@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
+  site: '{{DOCS_URL}}',
   integrations: [
     starlight({
       title: '{{PROJECT_NAME}} Docs',

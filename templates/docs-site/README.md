@@ -30,6 +30,7 @@ At minimum, update:
 - `{{PROJECT_NAME}}`
 - `{{PROJECT_DESCRIPTION}}`
 - `{{REPOSITORY_URL}}`
+- `{{DOCS_URL}}`
 - `{{RUNTIME_REQUIREMENT}}`
 - `{{PACKAGE_MANAGER}}`
 - `{{INSTALL_COMMAND}}`
@@ -42,6 +43,11 @@ npm install
 npm run dev
 npm run build
 ```
+
+`{{DOCS_URL}}` must be the absolute public URL where the documentation will be
+served, including any path prefix (for example,
+`https://example.com/project/`). Astro uses it to generate canonical URLs and
+the sitemap. Use the final deployment URL before publishing the site.
 
 Keep docs-site dependency updates in their own reviewable changes.
 
