@@ -8,6 +8,7 @@ It is not required by the base template. Copy it into a generated repository onl
 
 - Astro and Starlight configuration.
 - Starter overview, getting started, and contributing pages.
+- Starlight's built-in not-found page, emitted as `dist/404.html`.
 - Placeholder values that match `docs/template-variables.md`.
 - Static build output suitable for any static host.
 
@@ -50,6 +51,10 @@ served, including any path prefix (for example,
 the sitemap. Use the final deployment URL before publishing the site.
 
 Keep docs-site dependency updates in their own reviewable changes.
+
+Starlight owns the `/404` route. Do not add a `404.mdx` content entry or a
+`src/pages/404.astro` page alongside the integration; either would define a
+second route and conflict with Starlight's built-in page.
 
 ## Deployment
 
