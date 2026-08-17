@@ -58,6 +58,10 @@ normalize_placeholders "$work_dir/docs-site"
   cd "$work_dir/docs-site"
   npm install --ignore-scripts
   npm run build 2>&1 | tee build.log
+  if grep -Fq 'Could not render `/404`' build.log; then
+    printf 'Docs site build reported a conflicting 404 route.\n' >&2
+    exit 1
+  fi
   if grep -Fq 'Entry docs → 404 was not found' build.log; then
     printf 'Docs site build reported a missing 404 content entry.\n' >&2
     exit 1
