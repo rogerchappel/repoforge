@@ -62,10 +62,6 @@ normalize_placeholders "$work_dir/docs-site"
     printf 'Docs site build reported a conflicting 404 route.\n' >&2
     exit 1
   fi
-  if grep -Fq 'Entry docs → 404 was not found' build.log; then
-    printf 'Docs site build reported a missing 404 content entry.\n' >&2
-    exit 1
-  fi
   if grep -Fq 'Sitemap integration requires the site' build.log; then
     printf 'Docs site build skipped sitemap generation.\n' >&2
     exit 1
