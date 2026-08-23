@@ -56,7 +56,7 @@ cp -R "$repo_root/templates/docs-site" "$work_dir/docs-site"
 normalize_placeholders "$work_dir/docs-site"
 (
   cd "$work_dir/docs-site"
-  npm install --ignore-scripts
+  npm ci --ignore-scripts
   npm run build 2>&1 | tee build.log
   if grep -Fq 'Could not render `/404`' build.log; then
     printf 'Docs site build reported a conflicting 404 route.\n' >&2
