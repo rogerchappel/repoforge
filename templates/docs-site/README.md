@@ -19,6 +19,7 @@ Recommended generated repository layout:
 ```text
 docs-site/
   astro.config.mjs
+  package-lock.json
   package.json
   src/
 ```
@@ -40,7 +41,7 @@ At minimum, update:
 From the copied `docs-site/` directory, run:
 
 ```sh
-npm install
+npm ci
 npm run dev
 npm run build
 ```
@@ -50,7 +51,12 @@ served, including any path prefix (for example,
 `https://example.com/project/`). Astro uses it to generate canonical URLs and
 the sitemap. Use the final deployment URL before publishing the site.
 
-Keep docs-site dependency updates in their own reviewable changes.
+The scaffold pins its direct Astro and Starlight versions and commits the npm
+lockfile so clean installs resolve the reviewed dependency graph. Keep docs-site
+dependency updates in their own reviewable changes. To update them, edit the
+explicit versions in `package.json`, run `npm install` to refresh
+`package-lock.json`, inspect both manifest and lockfile changes, then run
+`npm ci` and `npm run build` from a clean copy before merging.
 
 Starlight owns the `/404` route. Do not add a `404.mdx` content entry or a
 `src/pages/404.astro` page alongside the integration; either would define a
