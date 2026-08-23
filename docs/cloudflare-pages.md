@@ -22,6 +22,7 @@ For a docs site copied from `templates/docs-site/`, use:
 ```text
 docs-site/
   astro.config.mjs
+  package-lock.json
   package.json
   src/
 ```
@@ -91,6 +92,7 @@ Dashboard-managed Pages builds are simpler and should be the default recommendat
 Before enabling Cloudflare Pages in a generated repository, confirm:
 
 - the docs site builds locally
+- `npm ci` succeeds from the committed docs-site lockfile
 - the Cloudflare Pages project points at the docs-site root
 - no Cloudflare credentials are committed
 - Cloudflare is described as optional in project docs
