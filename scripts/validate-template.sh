@@ -119,6 +119,7 @@ templates/dependabot/README.md
 templates/docs-site/.gitignore
 templates/docs-site/README.md
 templates/docs-site/astro.config.mjs
+templates/docs-site/package-lock.json
 templates/docs-site/package.json
 templates/docs-site/src/content.config.ts
 templates/docs-site/src/content/docs/contributing.mdx
@@ -180,6 +181,29 @@ printf '\nChecking required template files...\n'
 for file in $required_template_files; do
   check_file "$file"
 done
+
+printf '\nChecking docs-site dependency policy...\n'
+if node <<'NODE'
+const fs = require("node:fs");
+const manifest = JSON.parse(fs.readFileSync("templates/docs-site/package.json", "utf8"));
+const lockfile = JSON.parse(fs.readFileSync("templates/docs-site/package-lock.json", "utf8"));
+const dependencies = manifest.dependencies || {};
+for (const name of ["astro", "@astrojs/starlight"]) {
+  const version = dependencies[name];
+  if (!/^\d+\.\d+\.\d+$/.test(version || "")) {
+    throw new Error(`${name} must use an exact semantic version, received ${JSON.stringify(version)}`);
+  }
+  const locked = lockfile.packages?.[""]?.dependencies?.[name];
+  if (locked !== version) {
+    throw new Error(`${name} lockfile declaration ${JSON.stringify(locked)} does not match ${version}`);
+  }
+}
+NODE
+then
+  pass "docs-site uses exact direct versions with a matching lockfile"
+else
+  fail "docs-site dependency policy"
+fi
 
 printf '\nScanning for unresolved placeholders outside allowed template paths...\n'
 placeholder_hits="$(grep -RInE '\{\{[A-Z0-9_]+\}\}' \
