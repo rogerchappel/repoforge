@@ -19,6 +19,8 @@ format and uses semantic versioning when versioned releases are published.
 
 ### Changed
 
+- Refreshed the generated docs-site template to Astro 7.2.8 and Starlight
+  0.41.9, including its reproducible lockfile.
 - Aligned template terminology, placeholder documentation, and current V1
   surface area across docs, templates, and workflows.
 - Expanded the optional docs-site template with clearer setup guidance and a
