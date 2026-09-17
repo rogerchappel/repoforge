@@ -1,0 +1,9 @@
+{
+  "repo": "/Users/roger/Developer/my-opensource/repo-to-content/package.json",
+  "evidence": [
+    {
+      "claim": "package.json",
+      "source": "package.json or README.md"
+    }
+  ]
+}

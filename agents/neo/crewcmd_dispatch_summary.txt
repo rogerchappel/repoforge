@@ -1,0 +1,7 @@
+CrewCmd queue dispatch complete for workspace cf753270-6ca4-491b-b6e0-31e69292a7b3.
+
+No queued tasks found in this workspace. The following tasks were found:
+- 4 tasks assigned to agents (FORGE and SPARK) that are currently in "in_progress" status
+- All agents are currently offline (status: offline)
+
+Since there are no tasks in "queued" status, no dispatching was performed.

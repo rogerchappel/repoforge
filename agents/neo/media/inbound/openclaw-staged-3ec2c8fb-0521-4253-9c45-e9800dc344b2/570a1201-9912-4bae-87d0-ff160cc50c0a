@@ -1,0 +1,355 @@
+That last merged broke some tests I think
+46s
+Run pnpm test
+
+> thoroughbreds-monorepo@1.0.0 test /home/runner/work/thoroughbreds/thoroughbreds
+> turbo run test
+
+• Packages in scope: @thoroughbreds/api, @thoroughbreds/auth, @thoroughbreds/database, @thoroughbreds/mobile, @thoroughbreds/public, @thoroughbreds/share, @thoroughbreds/types, @thoroughbreds/ui, @thoroughbreds/web
+• Running test in 9 packages
+• Remote caching disabled
+@thoroughbreds/types:test
+@thoroughbreds/types:build
+@thoroughbreds/database:test
+@thoroughbreds/auth:test
+@thoroughbreds/database:build
+@thoroughbreds/auth:build
+@thoroughbreds/public:test
+@thoroughbreds/api:test
+@thoroughbreds/web:test
+Error: @thoroughbreds/web#test: command (/home/runner/work/thoroughbreds/thoroughbreds/apps/web) /home/runner/setup-pnpm/node_modules/.bin/pnpm run test exited (1)
+cache bypass, force executing ebc43b61c99da730
+
+> @thoroughbreds/web@0.5.0 test /home/runner/work/thoroughbreds/thoroughbreds/apps/web
+> vitest run
+
+
+ RUN  v4.1.10 /home/runner/work/thoroughbreds/thoroughbreds/apps/web
+
+ ✓ src/components/AdminDnaIntakesPage.test.tsx (6 tests) 3418ms
+     ✓ shows the customer, horses, consent, and attribution together  649ms
+     ✓ records the evidence used for manual contact verification  1258ms
+     ✓ explains that approval only advances the intake to matching  484ms
+     ✓ searches and selects an Equine golden record for a linked account  502ms
+ ✓ src/lib/__tests__/upcoming-sales-offline-isolation.test.ts (7 tests) 27ms
+ ↓ src/components/__tests__/PageTour.test.tsx (19 tests | 19 skipped)
+ ✓ src/__tests__/ModularScoringPanel.test.tsx (22 tests) 1586ms
+ ✓ src/__tests__/ScoringOnboardingWizard.test.tsx (10 tests) 2504ms
+     ✓ navigates to step 2 when selecting standard-5 and clicking Next  367ms
+     ✓ skips step 2 when selecting letter-grade template  339ms
+     ✓ validates min/max range on step 2  300ms
+     ✓ shows summary on step 4 with correct template name  301ms
+     ✓ calls onComplete when confirming on step 4  330ms
+ ✓ src/components/stable/HorseDnaTab.test.tsx (5 tests) 562ms
+ ✓ src/components/AdminDnaOrdersPage.test.tsx (3 tests) 830ms
+     ✓ requires both consent attestations before approving and creating the order  402ms
+ ✓ src/components/AdminUsersPage.test.tsx (2 tests) 1359ms
+     ✓ loads the selected server page and updates the visible range  709ms
+     ✓ debounces search and resets pagination to the first page  648ms
+ ✓ src/lib/__tests__/posthog.test.ts (4 tests) 8ms
+ ✓ src/components/stable/HorseDetailPanel.test.tsx (3 tests) 522ms
+ ✓ src/lib/__tests__/recommendation-assessment-events.test.ts (4 tests) 10ms
+ ✓ src/__tests__/onboarding/AdminOnboardingWizard.test.tsx (4 tests) 608ms
+     ✓ starts on step 1  312ms
+ ✓ src/components/sales/analysis/__tests__/CataloguePdfViewer.test.tsx (2 tests) 54ms
+ ✓ src/__tests__/shortlist-hooks.test.tsx (1 test) 19ms
+ ❯ src/components/__tests__/ContactPreferencesCard.test.tsx (1 test | 1 failed) 221ms
+     × clears call consent when the mobile number is removed 218ms
+ ✓ src/components/sales/analysis/__tests__/CatalogueUnavailableState.test.tsx (3 tests) 333ms
+ ✓ src/lib/__tests__/recommendations.test.ts (2 tests) 3ms
+ ❯ src/components/__tests__/AuthPage.mobile.test.tsx (1 test | 1 failed) 992ms
+     × keeps mobile and call permission optional during signup 990ms
+ ✓ src/__tests__/setup.test.ts (2 tests) 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/__tests__/AuthPage.mobile.test.tsx > AuthPage mobile signup field > keeps mobile and call permission optional during signup
+TestingLibraryElementError: Unable to find an accessible element with the role "checkbox"
+
+Here are the accessible roles:
+
+  img:
+
+  Name "Thoroughbreds AI":
+  <img
+    alt="Thoroughbreds AI"
+    class="w-16 h-16"
+    src="/src/assets/logo_square.png"
+  />
+
+  Name "Thoroughbreds AI":
+  <img
+    alt="Thoroughbreds AI"
+    class="h-8"
+    src="/src/assets/logo_wordmark.png"
+  />
+
+  --------------------------------------------------
+  heading:
+
+  Name "Create Account":
+  <h4
+    class="leading-none text-brand-primary"
+    data-slot="card-title"
+  />
+
+  --------------------------------------------------
+  textbox:
+
+  Name "First Name":
+  <input
+    autocomplete="given-name"
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-11 md:h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-brand-primary/20 focus:border-brand-primary"
+    data-slot="input"
+    id="firstName"
+    type="text"
+    value=""
+  />
+
+  Name "Last Name":
+  <input
+    autocomplete="family-name"
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-11 md:h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-brand-primary/20 focus:border-brand-primary"
+    data-slot="input"
+    id="lastName"
+    type="text"
+    value=""
+  />
+
+  Name "Email Address":
+  <input
+    autocomplete="email"
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-11 md:h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-brand-primary/20 focus:border-brand-primary"
+    data-slot="input"
+    id="email"
+    required=""
+    type="email"
+    value=""
+  />
+
+  Name "Stable or Team Name":
+  <input
+    autocomplete="organization"
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-11 md:h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-brand-primary/20 focus:border-brand-primary"
+    data-slot="input"
+    id="teamName"
+    type="text"
+    value=""
+  />
+
+  Name "Mobile Number (optional)":
+  <input
+    autocomplete="tel"
+    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm dark:border-foreground/50 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+    id="phone"
+    inputmode="tel"
+    type="tel"
+    value="+1 0400111222"
+  />
+
+  --------------------------------------------------
+  combobox:
+
+  Name "Country":
+  <button
+    aria-controls="radix-_r_0_"
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    class="inline-flex items-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border text-foreground hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:hover:bg-input/50 h-11 md:h-9 px-4 py-2 has-[>svg]:px-3 w-full justify-between bg-background dark:border-foreground/50"
+    data-slot="popover-trigger"
+    data-state="closed"
+    id="country-picker"
+    role="combobox"
+    type="button"
+  />
+
+  --------------------------------------------------
+  button:
+
+  Name "CREATE ACCOUNT":
+  <button
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-11 md:h-9 px-4 py-2 has-[>svg]:px-3 w-full btn-primary"
+    type="submit"
+  />
+
+  Name "Sign in":
+  <button
+    class="underline hover:text-brand-primary"
+    type="button"
+  />
+
+  --------------------------------------------------
+  link:
+
+  Name "Terms of Service":
+  <a
+    class="underline hover:text-brand-primary"
+    href="https://thoroughbreds.ai/terms"
+    rel="noopener noreferrer"
+    target="_blank"
+  />
+
+  Name "Privacy Policy":
+  <a
+    class="underline hover:text-brand-primary"
+    href="https://thoroughbreds.ai/privacy"
+    rel="noopener noreferrer"
+    target="_blank"
+  />
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="min-h-screen bg-background flex items-center justify-center spacing-generous p-4"
+    >
+      <div
+        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border w-full max-w-md card-shadow"
+        data-slot="card"
+      >
+        <div
+          class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 pt-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6 text-center spacing-generous"
+          data-slot="card-header"
+        >
+          <div
+            class="flex justify-center items-center mb-4"
+          >
+            <div
+              class="flex flex-col items-center gap-3"
+            >
+              <img
+                alt="Thoroughbreds AI"
+                class="w-16 h-16"
+                src="/src/assets/logo_square.png"
+              />
+              <img
+                alt="Thoroughbreds AI"
+                class="h-8"
+                src="/src/assets/logo_wordmark.png"
+              />
+            </div>
+          </div>
+          <h4
+            class="leading-none text-brand-primary"
+            data-slot="card-title"
+          >
+            Create Account
+          </h4>
+          <p
+            class="text-brand-secondary"
+          >
+            Create an account with passwordless sign in
+          </p>
+        </div>
+        <div
+          class="px-6 [&:last-child]:pb-6 space-y-6"
+          data-slot="card-content"
+        >
+          <form
+            class="space-y-4"
+          >
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 gap-3"
+            >
+              <div
+                class="space-y-2"
+              >
+                <label
+                  class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                  data-slot="label"
+                  for="firstName"
+                >
+                  First Name
+                </label>
+                <input
+                  autocomplete="given-name"
+                  class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-11 md:h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-brand-primary/20 focus:border-brand-primary"
+                  data-slot="input"
+                  id="firstName"
+                  type="text"
+                  value=""
+                />
+              </div>
+              <div
+                class="space-y-2"
+              >
+                <label
+                  class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                  data-slot="label"
+                  for="lastName"
+                >
+                  Last Name
+                </label>
+                <input
+                  autocomplete="family-name"
+                  class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-11 md:h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-brand-primary/20 focus:border-brand-primary"
+                  data-slot="input"
+                  id="lastName"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              class="space-y-2"
+            >
+              <label
+                class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                data-slot="label"
+                for="email"
+              >
+                Email Address
+              </label>
+              <input
+                autocomplete="email"
+                class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-11 md:h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base bg-input-background transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-...
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@9.3.4/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@9.3.4/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@9.3.4/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@9.3.4/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/__tests__/AuthPage.mobile.test.tsx:36:19
+     34|     await user.type(mobileInput, '0400 111 222')
+     35|
+     36|     expect(screen.getByRole('checkbox')).toBeEnabled()
+       |                   ^
+     37|     expect(screen.getByRole('button', { name: 'CREATE ACCOUNT' })).toB…
+     38|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/components/__tests__/ContactPreferencesCard.test.tsx > ContactPreferencesCard > clears call consent when the mobile number is removed
+Error: expect(element).toHaveValue(+61400111222)
+
+Expected the element to have value:
+  +61400111222
+Received:
+  +61 400 111 222
+ ❯ src/components/__tests__/ContactPreferencesCard.test.tsx:50:25
+     48|     const consentCheckbox = screen.getByRole('checkbox')
+     49|
+     50|     expect(mobileInput).toHaveValue('+61400111222')
+       |                         ^
+     51|     expect(consentCheckbox).toBeChecked()
+     52|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 16 passed | 1 skipped (19)
+      Tests  2 failed | 80 passed | 19 skipped (101)
+   Start at  06:16:16
+   Duration  33.50s (transform 1.24s, setup 925ms, import 7.02s, tests 13.08s, environment 9.70s)
+
+ ELIFECYCLE  Test failed. See above for more details.
+[ERROR] command finished with error: command (/home/runner/work/thoroughbreds/thoroughbreds/apps/web) /home/runner/setup-pnpm/node_modules/.bin/pnpm run test exited (1)
+
+ Tasks:    8 successful, 9 total
+Cached:    0 cached, 9 total
+  Time:    44.789s 
+Failed:    @thoroughbreds/web#test
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Test failed. See above for more details.
+Error: Process completed with exit code 1.

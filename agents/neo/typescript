@@ -1,0 +1,5 @@
+Script started on Fri Aug  7 05:16:20 2026
+^D[[31mERROR[0m] - (starship::print): Under a 'dumb' terminal (TERM=dumb).
+%                                                                               Starship disabled due to TERM=dumb > [?2004h[?2004l
+
+Script done on Fri Aug  7 05:16:20 2026
