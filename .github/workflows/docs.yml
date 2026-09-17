@@ -1,0 +1,55 @@
+name: Docs
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-hygiene:
+    name: Docs hygiene
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Validate docs directory
+        run: |
+          set -euo pipefail
+
+          test -d docs
+          test -s docs/PRD.md
+
+      - name: Validate markdown paths
+        run: |
+          set -euo pipefail
+
+          find . -type f -name '*.md' -not -path './.git/*' -print | sort > markdown-files.txt
+          test -s markdown-files.txt
+
+          while IFS= read -r file; do
+            test -s "$file"
+          done < markdown-files.txt
+
+      - name: Validate docs workflow scope
+        run: |
+          set -euo pipefail
+
+          test ! -f package.json
+          test -s docs/repo-customisation.md
+          test -s docs/template-variables.md
+          test -s templates/docs-site/package.json

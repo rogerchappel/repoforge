@@ -1,0 +1,155 @@
+name: branchbrief
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  branchbrief:
+    name: Generate branchbrief
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Build branchbrief summary
+        run: |
+          set -euo pipefail
+
+          base_ref="${GITHUB_BASE_REF:-main}"
+          head_ref="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          base_range="origin/$base_ref...HEAD"
+          commit_range="origin/$base_ref..HEAD"
+
+          git fetch --no-tags origin "$base_ref:refs/remotes/origin/$base_ref"
+
+          changed_files=("")
+          changed_file_count=0
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+            changed_files+=("$file")
+            changed_file_count=$((changed_file_count + 1))
+          done < <(git diff --name-only "$base_range" || true)
+
+          review_files=("")
+          review_file_count=0
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+            review_files+=("$file")
+            review_file_count=$((review_file_count + 1))
+          done < <(git diff --name-only --diff-filter=ACMRT "$base_range" || true)
+
+          has_path() {
+            local pattern="$1"
+            local file
+
+            for file in "${changed_files[@]}"; do
+              [[ -z "$file" ]] && continue
+
+              if [[ "$file" =~ $pattern ]]; then
+                return 0
+              fi
+            done
+
+            return 1
+          }
+
+          print_review_area() {
+            local label="$1"
+            local pattern="$2"
+
+            if has_path "$pattern"; then
+              echo "- $label"
+            fi
+          }
+
+          {
+            echo "# branchbrief"
+            echo
+            echo "- Base: \`$base_ref\`"
+            echo "- Head: \`$head_ref\`"
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo
+            echo "## Recent Commits"
+            echo
+            recent_commits="$(git log --oneline "$commit_range" || true)"
+
+            if [[ -n "$recent_commits" ]]; then
+              echo "$recent_commits"
+            else
+              echo "No commits found against \`$base_ref\`."
+            fi
+            echo
+            echo "## Changed Files"
+            echo
+            if ((changed_file_count == 0)); then
+              echo "No changed files found."
+            else
+              git diff --name-status "$base_range" || true
+            fi
+            echo
+            echo "## Diff Stat"
+            echo
+            if ((changed_file_count == 0)); then
+              echo "No diff stat available."
+            else
+              git diff --stat "$base_range" || true
+            fi
+            echo
+            echo "## Likely Review Areas"
+            echo
+            review_areas="$(
+              {
+                print_review_area "CI and workflow behavior" '^\.github/workflows/|^templates/github/workflows/'
+                print_review_area "Documentation accuracy" '(^|/)README\.md$|^docs/'
+                print_review_area "Template scaffolding" '^templates/'
+                print_review_area "Application or library code" '^(src|app|lib|packages)/'
+                print_review_area "Tests and fixtures" '(^|/)(test|tests|spec|specs|__tests__|fixtures)(/|$)|\.(test|spec)\.'
+                print_review_area "Build, package, or dependency metadata" '(^|/)(package\.json|package-lock\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb|Cargo\.toml|Cargo\.lock|pyproject\.toml|requirements.*\.txt|go\.mod|go\.sum)$'
+                print_review_area "Database migrations or schema changes" '(^|/)(migrations?|schema)(/|$)'
+                true
+              }
+            )"
+
+            if [[ -n "$review_areas" ]]; then
+              echo "$review_areas"
+            else
+              echo "- General code review"
+            fi
+            echo
+            echo "## Risk Keywords"
+            echo
+            if ((review_file_count == 0)); then
+              echo "No reviewable files to scan."
+            else
+              risk_matches=""
+
+              for file in "${review_files[@]}"; do
+                [[ -z "$file" ]] && continue
+
+                file_matches="$(git grep -n -I -i -E 'auth|security|billing|secrets?|migrations?|telemetry|licen[cs](e|ing)' HEAD -- "$file" || true)"
+                if [[ -n "$file_matches" ]]; then
+                  risk_matches="${risk_matches}${file_matches}"$'\n'
+                fi
+              done
+
+              if [[ -n "$risk_matches" ]]; then
+                echo "$risk_matches" | sed -E '/^$/d; s/^/- /'
+              else
+                echo "No configured risk keywords found in changed files."
+              fi
+            fi
+          } > branchbrief.md
+
+      - name: Upload branchbrief artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: branchbrief
+          path: branchbrief.md
+          if-no-files-found: error

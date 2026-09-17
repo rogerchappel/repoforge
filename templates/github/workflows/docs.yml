@@ -1,0 +1,56 @@
+name: Docs
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-hygiene:
+    name: Docs hygiene
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Validate docs directory
+        run: |
+          set -euo pipefail
+
+          test -d docs
+          test -s docs/PRD.md
+
+      - name: Validate markdown paths
+        run: |
+          set -euo pipefail
+
+          find . -type f -name '*.md' -not -path './.git/*' -print | sort > markdown-files.txt
+          test -s markdown-files.txt
+
+          while IFS= read -r file; do
+            test -s "$file"
+          done < markdown-files.txt
+
+      - name: Print docs customization TODO
+        run: |
+          set -euo pipefail
+
+          if [ -f package.json ]; then
+            echo "Add docs build verification here when the repository has a docs toolchain."
+          else
+            echo "No package.json found; docs workflow is limited to markdown hygiene."
+          fi
