@@ -1,0 +1,10 @@
+{
+  "name": "repoforge",
+  "version": "0.1.0",
+  "description": "Create local-first repository scaffolds from bundled templates",
+  "type": "module",
+  "bin": {"repoforge": "./bin/repoforge.js"},
+  "scripts": {"test": "node --test", "smoke": "bash scripts/smoke-new.sh"},
+  "engines": {"node": ">=20"},
+  "license": "MIT"
+}

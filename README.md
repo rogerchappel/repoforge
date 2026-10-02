@@ -84,3 +84,19 @@ For repository workflow rules, see [AGENTS.md](AGENTS.md).
 ## License
 
 MIT.
+
+## Local generator
+
+Install dependencies are not required for the bundled generator. From the
+repository root, run:
+
+```sh
+node bin/repoforge.js new my-project
+```
+
+This creates `my-project` in the current directory, substitutes the core project
+name and common defaults, and initializes a local Git repository. It performs
+no network operations; GitHub creation is not implemented. Generated reusable
+`.template` files may retain placeholders for later customization.
+
+Run `npm test` and `npm run smoke` to verify the generator locally.
